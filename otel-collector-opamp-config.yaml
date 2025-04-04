@@ -1,1 +1,1 @@
-server_endpoint: ${SIGNOZ_OPAMP_ENDPOINT}
+disabled: true
