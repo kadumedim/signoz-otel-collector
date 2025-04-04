@@ -1,9 +1,13 @@
 FROM signoz/signoz-otel-collector:v0.111.37
 
+# Install envsubst
+RUN apt-get update && apt-get install -y --no-install-recommends gettext-base && rm -rf /var/lib/apt/lists/*
+
 COPY otel-collector-config.yaml /etc/otel-collector-config.yaml
 COPY otel-collector-opamp-config.yaml /etc/manager-config.yaml
+COPY entrypoint.sh /entrypoint.sh
 
-ARG SIGNOZ_OPAMP_ENDPOINT
-ENV SIGNOZ_OPAMP_ENDPOINT=${SIGNOZ_OPAMP_ENDPOINT}
+RUN chmod +x /entrypoint.sh
 
-CMD ["--config=/etc/otel-collector-config.yaml", "--manager-config=/etc/manager-config.yaml", "--copy-path=/var/tmp/collector-config.yaml", "--feature-gates=-pkg.translator.prometheus.NormalizeName"]
+# Use the entrypoint script instead of directly running the collector
+ENTRYPOINT ["/entrypoint.sh"]
